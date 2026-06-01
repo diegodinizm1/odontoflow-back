@@ -114,6 +114,38 @@ class BillingServiceTest {
     }
 
     @Test
+    void simulatePaymentEvent_fail_setsPastDue() {
+        Subscription sub = Subscription.builder().tenantId(tenantId).plan(Plan.PRO).status(SubscriptionStatus.ACTIVE).build();
+        UUID invoiceId = UUID.randomUUID();
+        Invoice inv = Invoice.builder().id(invoiceId).tenantId(tenantId).subscription(sub).amount(BigDecimal.TEN)
+                .status(InvoiceStatus.PAID).build();
+        when(invoiceRepository.findByIdAndTenantId(invoiceId, tenantId)).thenReturn(Optional.of(inv));
+        when(invoiceRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(subscriptionRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        SubscriptionResponse res = service.simulatePaymentEvent(invoiceId, false);
+
+        assertThat(res.status()).isEqualTo(SubscriptionStatus.PAST_DUE);
+        assertThat(inv.getStatus()).isEqualTo(InvoiceStatus.FAILED);
+    }
+
+    @Test
+    void simulatePaymentEvent_recover_setsActive() {
+        Subscription sub = Subscription.builder().tenantId(tenantId).plan(Plan.PRO).status(SubscriptionStatus.PAST_DUE).build();
+        UUID invoiceId = UUID.randomUUID();
+        Invoice inv = Invoice.builder().id(invoiceId).tenantId(tenantId).subscription(sub).amount(BigDecimal.TEN)
+                .status(InvoiceStatus.FAILED).build();
+        when(invoiceRepository.findByIdAndTenantId(invoiceId, tenantId)).thenReturn(Optional.of(inv));
+        when(invoiceRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(subscriptionRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        SubscriptionResponse res = service.simulatePaymentEvent(invoiceId, true);
+
+        assertThat(res.status()).isEqualTo(SubscriptionStatus.ACTIVE);
+        assertThat(inv.getStatus()).isEqualTo(InvoiceStatus.PAID);
+    }
+
+    @Test
     void webhook_invoiceFailed_marksPastDue() {
         Subscription sub = Subscription.builder().tenantId(tenantId).plan(Plan.PRO).status(SubscriptionStatus.ACTIVE).build();
         Invoice inv = Invoice.builder().tenantId(tenantId).subscription(sub).amount(BigDecimal.TEN)

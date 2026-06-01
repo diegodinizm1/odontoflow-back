@@ -95,19 +95,34 @@ public class BillingService {
     public void handleWebhook(BillingWebhookRequest event) {
         Invoice invoice = invoiceRepository.findByExternalInvoiceId(event.externalInvoiceId())
                 .orElseThrow(() -> new NotFoundException("Fatura não encontrada."));
-        Subscription subscription = invoice.getSubscription();
-
         switch (event.type()) {
-            case "invoice.paid" -> {
-                invoice.setStatus(InvoiceStatus.PAID);
-                invoice.setPaidAt(LocalDateTime.now());
-                subscription.setStatus(SubscriptionStatus.ACTIVE);
-            }
-            case "invoice.failed" -> {
-                invoice.setStatus(InvoiceStatus.FAILED);
-                subscription.setStatus(SubscriptionStatus.PAST_DUE);
-            }
+            case "invoice.paid"   -> applyInvoiceEvent(invoice, true);
+            case "invoice.failed" -> applyInvoiceEvent(invoice, false);
             default -> { /* ignore unknown event types */ }
+        }
+    }
+
+    /**
+     * Dev-only helper to trigger a payment event for one of the tenant's invoices,
+     * like {@code stripe trigger} — drives the same transition the gateway webhook would.
+     */
+    @Transactional
+    public SubscriptionResponse simulatePaymentEvent(UUID invoiceId, boolean paid) {
+        Invoice invoice = invoiceRepository.findByIdAndTenantId(invoiceId, SecurityUtils.currentTenantId())
+                .orElseThrow(() -> new NotFoundException("Fatura não encontrada."));
+        applyInvoiceEvent(invoice, paid);
+        return SubscriptionResponse.from(invoice.getSubscription());
+    }
+
+    private void applyInvoiceEvent(Invoice invoice, boolean paid) {
+        Subscription subscription = invoice.getSubscription();
+        if (paid) {
+            invoice.setStatus(InvoiceStatus.PAID);
+            invoice.setPaidAt(LocalDateTime.now());
+            subscription.setStatus(SubscriptionStatus.ACTIVE);
+        } else {
+            invoice.setStatus(InvoiceStatus.FAILED);
+            subscription.setStatus(SubscriptionStatus.PAST_DUE);
         }
         invoiceRepository.save(invoice);
         subscriptionRepository.save(subscription);

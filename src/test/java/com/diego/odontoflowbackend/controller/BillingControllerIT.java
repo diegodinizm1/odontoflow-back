@@ -110,4 +110,30 @@ class BillingControllerIT {
         mockMvc.perform(get("/billing/subscription"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test @Order(7)
+    void simulateTriggers_driveSubscriptionStatus() throws Exception {
+        // subscribe to get a fresh PRO invoice
+        mockMvc.perform(post("/billing/subscribe")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("plan", "PRO"))))
+                .andExpect(status().isOk());
+
+        String invoices = mockMvc.perform(get("/billing/invoices").header("Authorization", "Bearer " + token))
+                .andReturn().getResponse().getContentAsString();
+        String invoiceId = objectMapper.readTree(invoices).get(0).get("id").asText();
+
+        // simulate failed payment -> PAST_DUE
+        mockMvc.perform(post("/billing/simulate/" + invoiceId + "/fail")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("PAST_DUE"));
+
+        // simulate recovery -> ACTIVE
+        mockMvc.perform(post("/billing/simulate/" + invoiceId + "/recover")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("ACTIVE"));
+    }
 }

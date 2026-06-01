@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
     List<Invoice> findByTenantIdOrderByCreatedAtDesc(UUID tenantId);
     Optional<Invoice> findByExternalInvoiceId(String externalInvoiceId);
+    Optional<Invoice> findByIdAndTenantId(UUID id, UUID tenantId);
 }
