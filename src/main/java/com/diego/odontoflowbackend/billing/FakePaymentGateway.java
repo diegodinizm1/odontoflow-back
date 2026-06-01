@@ -1,6 +1,7 @@
 package com.diego.odontoflowbackend.billing;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -10,9 +11,12 @@ import java.util.UUID;
  * Local/dev payment gateway that instantly approves charges — analogous to
  * using MinIO in place of real S3. Returns a synthetic external id so the
  * rest of the billing flow (invoices, webhooks) behaves like production.
+ *
+ * Default provider; set {@code billing.provider=stripe} to use {@link StripePaymentGateway}.
  */
 @Service
 @Slf4j
+@ConditionalOnProperty(name = "billing.provider", havingValue = "fake", matchIfMissing = true)
 public class FakePaymentGateway implements PaymentGateway {
 
     @Override

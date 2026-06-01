@@ -20,5 +20,12 @@ services:
     volumes:
       - minio_local_data:/data
     command: server /data --console-address ":9001"
+
+  stripe-mock:
+    image: stripe/stripe-mock:latest
+    container_name: stripe-mock
+    ports:
+      - "12111:12111"   # HTTP
+      - "12112:12112"   # HTTPS
 volumes:
   minio_local_data:
