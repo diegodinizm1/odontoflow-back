@@ -4,8 +4,12 @@ import com.diego.odontoflowbackend.entity.Patient;
 import com.diego.odontoflowbackend.entity.dto.request.CreatePatientRequest;
 import com.diego.odontoflowbackend.entity.dto.request.UpdatePatientRequest;
 import com.diego.odontoflowbackend.entity.dto.response.PatientResponse;
+import com.diego.odontoflowbackend.entity.enums.Plan;
 import com.diego.odontoflowbackend.exception.NotFoundException;
+import com.diego.odontoflowbackend.exception.PlanLimitExceededException;
 import com.diego.odontoflowbackend.repository.PatientRepository;
+import com.diego.odontoflowbackend.repository.SubscriptionRepository;
+import com.diego.odontoflowbackend.entity.Subscription;
 import com.diego.odontoflowbackend.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ import java.util.UUID;
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final SubscriptionRepository subscriptionRepository;
 
     public List<PatientResponse> listAll() {
         return patientRepository.findAllByTenantId(SecurityUtils.currentTenantId())
@@ -31,13 +36,27 @@ public class PatientService {
 
     @Transactional
     public PatientResponse create(CreatePatientRequest request) {
+        UUID tenantId = SecurityUtils.currentTenantId();
+        enforcePatientLimit(tenantId);
+
         Patient patient = Patient.builder()
-                .tenantId(SecurityUtils.currentTenantId())
+                .tenantId(tenantId)
                 .fullName(request.fullName())
                 .dateOfBirth(request.dateOfBirth())
                 .medicalAlerts(request.medicalAlerts())
                 .build();
         return PatientResponse.from(patientRepository.save(patient));
+    }
+
+    private void enforcePatientLimit(UUID tenantId) {
+        Plan plan = subscriptionRepository.findByTenantId(tenantId)
+                .map(Subscription::getPlan).orElse(Plan.FREE);
+        long count = patientRepository.countByTenantId(tenantId);
+        if (count >= plan.getMaxPatients()) {
+            throw new PlanLimitExceededException(
+                    "Limite de %d pacientes do plano %s atingido. Faça upgrade do plano."
+                            .formatted(plan.getMaxPatients(), plan.getDisplayName()));
+        }
     }
 
     @Transactional

@@ -57,10 +57,10 @@ class BillingControllerIT {
     }
 
     @Test @Order(1)
-    void plans_returnsFreeAndPro() throws Exception {
+    void plans_returnsAllTiers() throws Exception {
         mockMvc.perform(get("/billing/plans").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
+                .andExpect(jsonPath("$.length()").value(3));
     }
 
     @Test @Order(2)
@@ -85,7 +85,7 @@ class BillingControllerIT {
         mockMvc.perform(get("/billing/invoices").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].status").value("PAID"))
-                .andExpect(jsonPath("$[0].amount").value(149.90));
+                .andExpect(jsonPath("$[0].amount").value(199.90));
     }
 
     @Test @Order(4)

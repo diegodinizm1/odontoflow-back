@@ -7,7 +7,8 @@ import java.math.BigDecimal;
 @Getter
 public enum Plan {
     FREE("Grátis", new BigDecimal("0.00"), 50, 1),
-    PRO("Pro", new BigDecimal("149.90"), 100_000, 25);
+    ESSENTIAL("Essencial", new BigDecimal("89.90"), 500, 3),
+    PRO("Pro", new BigDecimal("199.90"), 1_000_000, 1_000_000);
 
     private final String displayName;
     private final BigDecimal monthlyPrice;

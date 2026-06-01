@@ -51,6 +51,11 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req);
     }
 
+    @ExceptionHandler(PlanLimitExceededException.class)
+    public ResponseEntity<ErrorResponse> handlePlanLimit(PlanLimitExceededException ex, HttpServletRequest req) {
+        return build(HttpStatus.PAYMENT_REQUIRED, ex.getMessage(), req);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidation(MethodArgumentNotValidException ex,
                                                                      HttpServletRequest req) {

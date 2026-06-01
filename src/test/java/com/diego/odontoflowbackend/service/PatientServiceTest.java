@@ -3,9 +3,14 @@ package com.diego.odontoflowbackend.service;
 import com.diego.odontoflowbackend.entity.Patient;
 import com.diego.odontoflowbackend.entity.dto.request.CreatePatientRequest;
 import com.diego.odontoflowbackend.entity.dto.request.UpdatePatientRequest;
+import com.diego.odontoflowbackend.entity.Subscription;
 import com.diego.odontoflowbackend.entity.dto.response.PatientResponse;
+import com.diego.odontoflowbackend.entity.enums.Plan;
+import com.diego.odontoflowbackend.entity.enums.SubscriptionStatus;
 import com.diego.odontoflowbackend.exception.NotFoundException;
+import com.diego.odontoflowbackend.exception.PlanLimitExceededException;
 import com.diego.odontoflowbackend.repository.PatientRepository;
+import com.diego.odontoflowbackend.repository.SubscriptionRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +34,7 @@ import static org.mockito.Mockito.*;
 class PatientServiceTest {
 
     @Mock PatientRepository patientRepository;
+    @Mock SubscriptionRepository subscriptionRepository;
     @InjectMocks PatientService patientService;
 
     private final UUID tenantId  = UUID.randomUUID();
@@ -83,6 +89,8 @@ class PatientServiceTest {
 
     @Test
     void create_savesWithTenantId() {
+        when(subscriptionRepository.findByTenantId(tenantId)).thenReturn(Optional.empty()); // -> FREE plan (50)
+        when(patientRepository.countByTenantId(tenantId)).thenReturn(10L);
         when(patientRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         PatientResponse response = patientService.create(
@@ -90,6 +98,20 @@ class PatientServiceTest {
 
         assertThat(response.fullName()).isEqualTo("Maria Souza");
         verify(patientRepository).save(argThat(p -> p.getTenantId().equals(tenantId)));
+    }
+
+    @Test
+    void create_atPlanLimit_throwsPlanLimitExceeded() {
+        Subscription free = Subscription.builder().tenantId(tenantId)
+                .plan(Plan.FREE).status(SubscriptionStatus.ACTIVE).build();
+        when(subscriptionRepository.findByTenantId(tenantId)).thenReturn(Optional.of(free));
+        when(patientRepository.countByTenantId(tenantId)).thenReturn(50L); // FREE limit reached
+
+        assertThatThrownBy(() -> patientService.create(
+                new CreatePatientRequest("Excedente", null, null)))
+                .isInstanceOf(PlanLimitExceededException.class)
+                .hasMessageContaining("upgrade");
+        verify(patientRepository, never()).save(any());
     }
 
     @Test
