@@ -3,12 +3,14 @@ package com.diego.odontoflowbackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.envers.Audited;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@Audited
 @Table(name = "patients", indexes = @Index(name = "idx_patients_tenant_id", columnList = "tenant_id"))
 @Getter
 @Setter

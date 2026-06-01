@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Entity
+@Audited
 @Table(name = "clinical_records", indexes = {
         @Index(name = "idx_clinical_records_tenant_id", columnList = "tenant_id"),
         @Index(name = "idx_clinical_records_patient_id", columnList = "patient_id")
@@ -32,6 +35,7 @@ public class ClinicalRecord {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Patient patient;
 
     @Column(name = "appointment_id")
@@ -47,6 +51,7 @@ public class ClinicalRecord {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id", nullable = false)
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private User createdBy;
 
     @CreationTimestamp
