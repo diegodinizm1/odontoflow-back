@@ -21,14 +21,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/appointments")
 @RequiredArgsConstructor
-@Tag(name = "Appointments", description = "Agenda e agendamentos")
+@Tag(name = "Appointments", description = "Scheduling and appointments")
 @SecurityRequirement(name = "bearerAuth")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
     @GetMapping
-    @Operation(summary = "Listar agendamentos no intervalo (semana/dia)")
+    @Operation(summary = "List appointments within a date range (week/day)")
     public List<AppointmentResponse> list(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
@@ -37,19 +37,19 @@ public class AppointmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Criar agendamento")
+    @Operation(summary = "Create appointment")
     public AppointmentResponse create(@Valid @RequestBody CreateAppointmentRequest request) {
         return appointmentService.create(request);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Reagendar consulta")
+    @Operation(summary = "Reschedule appointment")
     public AppointmentResponse reschedule(@PathVariable UUID id, @Valid @RequestBody RescheduleAppointmentRequest request) {
         return appointmentService.reschedule(id, request);
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Alterar status (cancelar/concluir)")
+    @Operation(summary = "Change status (cancel/complete)")
     public AppointmentResponse updateStatus(@PathVariable UUID id, @Valid @RequestBody UpdateAppointmentStatusRequest request) {
         return appointmentService.updateStatus(id, request);
     }

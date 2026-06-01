@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Estado de um dente no odontograma (armazenado em JSONB).
- * Ex.: { "condition": "CARIES", "surfaces": ["O", "M"] }
+ * State of a single tooth in the odontogram (stored as JSONB).
+ * e.g. { "condition": "CARIES", "surfaces": ["O", "M"] }
  */
 @Data
 @NoArgsConstructor

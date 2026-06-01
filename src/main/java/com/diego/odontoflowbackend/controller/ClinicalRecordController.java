@@ -20,20 +20,20 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/patients/{patientId}")
 @RequiredArgsConstructor
-@Tag(name = "Clinical Records", description = "Prontuário, odontograma e evolução clínica")
+@Tag(name = "Clinical Records", description = "Patient record, odontogram and clinical evolution")
 @SecurityRequirement(name = "bearerAuth")
 public class ClinicalRecordController {
 
     private final ClinicalRecordService recordService;
 
     @GetMapping("/records")
-    @Operation(summary = "Histórico de evoluções clínicas do paciente")
+    @Operation(summary = "Patient clinical evolution history")
     public List<ClinicalRecordResponse> list(@PathVariable UUID patientId) {
         return recordService.listByPatient(patientId);
     }
 
     @GetMapping("/odontogram")
-    @Operation(summary = "Estado atual (mais recente) do odontograma")
+    @Operation(summary = "Current (latest) odontogram state")
     public Map<String, ToothState> latestOdontogram(@PathVariable UUID patientId) {
         return recordService.latestOdontogram(patientId);
     }
@@ -41,7 +41,7 @@ public class ClinicalRecordController {
     @PostMapping("/records")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('DENTIST')")
-    @Operation(summary = "Salvar evolução clínica + odontograma (somente dentistas)")
+    @Operation(summary = "Save clinical evolution + odontogram (dentists only)")
     public ClinicalRecordResponse create(@PathVariable UUID patientId,
                                          @Valid @RequestBody CreateClinicalRecordRequest request) {
         return recordService.create(patientId, request);

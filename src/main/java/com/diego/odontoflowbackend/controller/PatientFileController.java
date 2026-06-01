@@ -18,21 +18,21 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/patients/{patientId}/files")
 @RequiredArgsConstructor
-@Tag(name = "Patient Files", description = "Radiografias e exames (Pre-Signed URLs)")
+@Tag(name = "Patient Files", description = "Radiographs and exams (pre-signed URLs)")
 @SecurityRequirement(name = "bearerAuth")
 public class PatientFileController {
 
     private final PatientFileService fileService;
 
     @GetMapping
-    @Operation(summary = "Listar arquivos do paciente com URLs de download temporárias")
+    @Operation(summary = "List patient files with temporary download URLs")
     public List<PatientFileResponse> list(@PathVariable UUID patientId) {
         return fileService.list(patientId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Solicitar Pre-Signed URL para upload de arquivo")
+    @Operation(summary = "Request a pre-signed URL for file upload")
     public UploadUrlResponse requestUpload(@PathVariable UUID patientId,
                                            @Valid @RequestBody UploadUrlRequest request) {
         return fileService.requestUpload(patientId, request);
@@ -40,7 +40,7 @@ public class PatientFileController {
 
     @DeleteMapping("/{fileId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Remover arquivo")
+    @Operation(summary = "Delete file")
     public void delete(@PathVariable UUID patientId, @PathVariable UUID fileId) {
         fileService.delete(patientId, fileId);
     }

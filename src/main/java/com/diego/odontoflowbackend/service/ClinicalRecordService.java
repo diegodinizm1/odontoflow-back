@@ -34,7 +34,7 @@ public class ClinicalRecordService {
                 .stream().map(ClinicalRecordResponse::from).toList();
     }
 
-    /** Estado mais recente do odontograma do paciente (ou vazio). */
+    /** Most recent odontogram state for the patient (empty if none). */
     public Map<String, ToothState> latestOdontogram(UUID patientId) {
         ensurePatient(patientId);
         return recordRepository.findHistory(patientId, SecurityUtils.currentTenantId())
