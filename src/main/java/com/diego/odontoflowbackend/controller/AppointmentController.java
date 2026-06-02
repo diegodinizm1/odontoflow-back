@@ -28,11 +28,12 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
 
     @GetMapping
-    @Operation(summary = "List appointments within a date range (week/day)")
+    @Operation(summary = "List appointments in a range (dentists see only their own; receptionists may filter by dentistId)")
     public List<AppointmentResponse> list(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
-        return appointmentService.listInRange(start, end);
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
+            @RequestParam(required = false) UUID dentistId) {
+        return appointmentService.listInRange(start, end, dentistId);
     }
 
     @PostMapping

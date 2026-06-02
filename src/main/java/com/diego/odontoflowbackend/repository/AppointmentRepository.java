@@ -27,6 +27,20 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
                                   @Param("end") LocalDateTime end);
 
     @Query("""
+            select a from Appointment a
+            join fetch a.patient
+            where a.tenantId = :tenantId
+              and a.dentistId = :dentistId
+              and a.startTime < :end
+              and a.endTime > :start
+            order by a.startTime
+            """)
+    List<Appointment> findInRangeByDentist(@Param("tenantId") UUID tenantId,
+                                           @Param("dentistId") UUID dentistId,
+                                           @Param("start") LocalDateTime start,
+                                           @Param("end") LocalDateTime end);
+
+    @Query("""
             select count(a) > 0 from Appointment a
             where a.tenantId = :tenantId
               and a.dentistId = :dentistId

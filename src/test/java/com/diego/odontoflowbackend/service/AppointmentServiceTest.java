@@ -23,6 +23,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -108,8 +109,41 @@ class AppointmentServiceTest {
 
     @Test
     void listInRange_endBeforeStart_throwsBadRequest() {
-        assertThatThrownBy(() -> appointmentService.listInRange(end, start))
+        assertThatThrownBy(() -> appointmentService.listInRange(end, start, null))
                 .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void listInRange_dentist_isScopedToOwnAgenda() {
+        security.when(SecurityUtils::currentRole).thenReturn("DENTIST");
+        when(appointmentRepository.findInRangeByDentist(tenantId, userId, start, end)).thenReturn(List.of());
+
+        appointmentService.listInRange(start, end, UUID.randomUUID()); // requested filter is ignored
+
+        verify(appointmentRepository).findInRangeByDentist(tenantId, userId, start, end);
+        verify(appointmentRepository, never()).findInRange(any(), any(), any());
+    }
+
+    @Test
+    void listInRange_receptionist_seesAllWhenNoFilter() {
+        security.when(SecurityUtils::currentRole).thenReturn("RECEPTIONIST");
+        when(appointmentRepository.findInRange(tenantId, start, end)).thenReturn(List.of());
+
+        appointmentService.listInRange(start, end, null);
+
+        verify(appointmentRepository).findInRange(tenantId, start, end);
+        verify(appointmentRepository, never()).findInRangeByDentist(any(), any(), any(), any());
+    }
+
+    @Test
+    void listInRange_receptionist_filtersByDentist() {
+        UUID otherDentist = UUID.randomUUID();
+        security.when(SecurityUtils::currentRole).thenReturn("RECEPTIONIST");
+        when(appointmentRepository.findInRangeByDentist(tenantId, otherDentist, start, end)).thenReturn(List.of());
+
+        appointmentService.listInRange(start, end, otherDentist);
+
+        verify(appointmentRepository).findInRangeByDentist(tenantId, otherDentist, start, end);
     }
 
     @Test

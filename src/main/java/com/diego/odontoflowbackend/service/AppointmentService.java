@@ -28,12 +28,25 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final PatientRepository patientRepository;
 
-    public List<AppointmentResponse> listInRange(LocalDateTime start, LocalDateTime end) {
+    /**
+     * Lists appointments in the range. A dentist only ever sees their own agenda;
+     * a receptionist sees everyone and may filter by {@code dentistId}.
+     */
+    public List<AppointmentResponse> listInRange(LocalDateTime start, LocalDateTime end, UUID dentistId) {
         if (end.isBefore(start)) {
             throw new BadRequestException("O fim do período deve ser após o início.");
         }
-        return appointmentRepository.findInRange(SecurityUtils.currentTenantId(), start, end)
-                .stream().map(AppointmentResponse::from).toList();
+        UUID tenantId = SecurityUtils.currentTenantId();
+
+        UUID effectiveDentistId = "DENTIST".equals(SecurityUtils.currentRole())
+                ? SecurityUtils.currentUserId()   // dentists are always scoped to themselves
+                : dentistId;                       // receptionists: optional filter (null = all)
+
+        List<Appointment> appointments = effectiveDentistId != null
+                ? appointmentRepository.findInRangeByDentist(tenantId, effectiveDentistId, start, end)
+                : appointmentRepository.findInRange(tenantId, start, end);
+
+        return appointments.stream().map(AppointmentResponse::from).toList();
     }
 
     @Transactional
