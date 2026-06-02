@@ -33,3 +33,11 @@ jobs:
             target/surefire-reports/
             target/failsafe-reports/
           retention-days: 7
+
+      - name: Upload coverage report (JaCoCo)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage
+          path: target/site/jacoco/
+          retention-days: 7

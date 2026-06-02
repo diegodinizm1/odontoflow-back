@@ -8,6 +8,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?logo=springboot&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?logo=postgresql&logoColor=white)
 ![Testes](https://img.shields.io/badge/testes-96%20passando-success)
+![Cobertura](https://img.shields.io/badge/cobertura-93%25%20linhas-success)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 
 > ℹ️ **Projeto de portfólio.** Nenhum segredo real é versionado — todas as credenciais vêm de variáveis de ambiente com defaults seguros para dev (veja [`.env.example`](.env.example)).
@@ -154,6 +155,8 @@ Tudo que é sensível vem de variáveis de ambiente (com defaults de dev). Veja 
 ```
 
 Os testes de integração sobem containers reais de PostgreSQL e `stripe-mock` via Testcontainers — o Docker precisa estar rodando.
+
+A cobertura é medida com **JaCoCo** (unit + integração): `./mvnw verify` gera um relatório HTML em `target/site/jacoco/index.html` (~93% de linhas / 81% de branches).
 
 ## Estrutura do projeto
 
