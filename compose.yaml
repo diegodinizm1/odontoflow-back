@@ -3,7 +3,7 @@ services:
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=odontoflow'
-      - 'POSTGRES_PASSWORD=${DB_PASSWORD:-788606}'
+      - 'POSTGRES_PASSWORD=${DB_PASSWORD:-odontoflow_dev}'
       - 'POSTGRES_USER=${DB_USERNAME:-postgres}'
     ports:
       - '5433:5432'
