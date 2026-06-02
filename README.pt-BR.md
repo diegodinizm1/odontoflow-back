@@ -30,6 +30,7 @@ Este repositório é a **API REST** (Spring Boot). O frontend em Angular fica em
 - 📅 **Agenda** — visão semanal/diária com **prevenção de sobreposição** por dentista, reagendamento e mudança de status.
 - 🦷 **Prontuário & odontograma** — evoluções assinadas pelo dentista + estado do odontograma em **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiografias** — upload via **Pre-Signed URLs temporárias** (S3/MinIO), sem expor o bucket publicamente.
+- 🗂️ **Planos de tratamento** — orçamento com itens (procedimento, dente opcional, valor); ao concluir um item, gera automaticamente uma cobrança pendente no financeiro.
 - 💰 **Financeiro da clínica** — cobranças por consulta (`PENDENTE`/`PAGO`/`CANCELADO`) e resumo mensal de faturamento.
 - 💳 **Assinaturas** — planos Grátis / Essencial / Pro com limites aplicados, faturas e gateway de pagamento plugável (+ webhook).
 - 🧑‍⚕️ **Gestão de equipe** — convite de dentistas/recepcionistas, respeitando o limite de dentistas do plano.
@@ -109,6 +110,8 @@ Base: `/api` · Documentação interativa: **`/api/swagger-ui.html`**
 | `GET` | `/patients/{id}/audit` | Histórico de alterações (auditoria) |
 | `GET/POST` | `/appointments` | Agenda (consulta por intervalo) / criar |
 | `PUT/PATCH` | `/appointments/{id}` | Reagendar / mudar status |
+| `GET/POST` | `/patients/{id}/treatment-plans` | Planos de tratamento / criar com itens |
+| `POST` | `/patients/{id}/treatment-plans/{planId}/items/{itemId}/complete` | Concluir item (gera cobrança) |
 | `GET/POST` | `/charges` · `/charges/summary` | Financeiro / resumo mensal |
 | `GET/POST` | `/billing/*` | Planos, assinatura, faturas |
 | `POST` | `/webhooks/billing` | Callbacks do gateway de pagamento |

@@ -30,6 +30,7 @@ This repository is the **REST API** (Spring Boot). The Angular frontend lives in
 - 📅 **Appointments** — weekly/daily agenda with **overlap prevention** per dentist, reschedule and status changes.
 - 🦷 **Clinical records & odontogram** — evolution notes signed by the dentist + odontogram state stored as **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiographs** — uploads via **time-limited pre-signed URLs** (S3/MinIO), never exposing the bucket publicly.
+- 🗂️ **Treatment plans** — budget with line items (procedure, optional tooth, amount); completing an item auto-generates a pending charge in finances.
 - 💰 **Clinic finances** — per-appointment charges (`PENDING`/`PAID`/`CANCELED`) and monthly revenue summary.
 - 💳 **Subscription billing** — Free / Essencial / Pro plans with enforced limits, invoices, and a pluggable payment gateway (+ webhook handling).
 - 🧑‍⚕️ **Team management** — invite dentists/receptionists, enforced by the plan's dentist limit.
@@ -109,6 +110,8 @@ Base path: `/api` · Interactive docs: **`/api/swagger-ui.html`**
 | `GET` | `/patients/{id}/audit` | Change history (audit trail) |
 | `GET/POST` | `/appointments` | Agenda (range query) / create |
 | `PUT/PATCH` | `/appointments/{id}` | Reschedule / change status |
+| `GET/POST` | `/patients/{id}/treatment-plans` | Treatment plans / create with items |
+| `POST` | `/patients/{id}/treatment-plans/{planId}/items/{itemId}/complete` | Complete item (generates a charge) |
 | `GET/POST` | `/charges` · `/charges/summary` | Finances / monthly summary |
 | `GET/POST` | `/billing/*` | Plans, subscription, invoices |
 | `POST` | `/webhooks/billing` | Payment gateway callbacks |
