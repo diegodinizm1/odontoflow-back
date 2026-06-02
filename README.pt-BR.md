@@ -23,6 +23,7 @@ Este repositório é a **API REST** (Spring Boot). O frontend em Angular fica em
 ## Funcionalidades
 
 **Funcionais**
+- 📊 **Dashboard** — visão geral agregada: total de pacientes, agenda do dia, faturamento do mês e cobranças pendentes.
 - 🔐 **Onboarding & Autenticação** — cadastro autônomo da clínica provisionando o dentista fundador; login JWT com `user_id`, `role` e `tenant_id`.
 - 👥 **Pacientes** — CRUD com anamnese (alergias, alertas médicos), isolado por tenant.
 - 📅 **Agenda** — visão semanal/diária com **prevenção de sobreposição** por dentista, reagendamento e mudança de status.
@@ -96,6 +97,7 @@ Base: `/api` · Documentação interativa: **`/api/swagger-ui.html`**
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
+| `GET` | `/dashboard` | Visão geral agregada (contagens, faturamento, agenda do dia) |
 | `POST` | `/auth/tenant` | Registrar clínica + dentista fundador |
 | `POST` | `/auth/login` | Autenticar, retorna JWT |
 | `GET/POST` | `/patients` | Listar / criar pacientes |

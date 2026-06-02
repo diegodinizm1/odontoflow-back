@@ -23,6 +23,7 @@ This repository is the **REST API** (Spring Boot). The Angular frontend lives in
 ## Features
 
 **Functional**
+- 📊 **Dashboard** — one aggregated overview: patient count, today's agenda, monthly revenue and pending charges.
 - 🔐 **Onboarding & Auth** — self-service clinic registration provisioning the founding dentist; JWT login carrying `user_id`, `role` and `tenant_id`.
 - 👥 **Patients** — CRUD with anamnesis (allergies, medical alerts), scoped per tenant.
 - 📅 **Appointments** — weekly/daily agenda with **overlap prevention** per dentist, reschedule and status changes.
@@ -96,6 +97,7 @@ Base path: `/api` · Interactive docs: **`/api/swagger-ui.html`**
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| `GET` | `/dashboard` | Aggregated overview (counts, revenue, today's agenda) |
 | `POST` | `/auth/tenant` | Register clinic + founding dentist |
 | `POST` | `/auth/login` | Authenticate, returns JWT |
 | `GET/POST` | `/patients` | List / create patients |
