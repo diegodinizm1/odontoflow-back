@@ -26,7 +26,7 @@ Este repositório é a **API REST** (Spring Boot). O frontend em Angular fica em
 **Funcionais**
 - 📊 **Dashboard** — visão geral agregada: total de pacientes, agenda do dia, faturamento do mês e cobranças pendentes.
 - 🔐 **Onboarding & Autenticação** — cadastro autônomo da clínica provisionando o dentista fundador; login JWT com `user_id`, `role` e `tenant_id`.
-- 👥 **Pacientes** — CRUD com anamnese (alergias, alertas médicos), isolado por tenant.
+- 👥 **Pacientes** — CRUD com telefone e anamnese (alergias, alertas médicos), isolado por tenant.
 - 📅 **Agenda** — visão semanal/diária com **prevenção de sobreposição** por dentista, reagendamento e mudança de status.
 - 🦷 **Prontuário & odontograma** — evoluções assinadas pelo dentista + estado do odontograma em **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiografias** — upload via **Pre-Signed URLs temporárias** (S3/MinIO), sem expor o bucket publicamente.

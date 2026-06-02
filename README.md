@@ -26,7 +26,7 @@ This repository is the **REST API** (Spring Boot). The Angular frontend lives in
 **Functional**
 - 📊 **Dashboard** — one aggregated overview: patient count, today's agenda, monthly revenue and pending charges.
 - 🔐 **Onboarding & Auth** — self-service clinic registration provisioning the founding dentist; JWT login carrying `user_id`, `role` and `tenant_id`.
-- 👥 **Patients** — CRUD with anamnesis (allergies, medical alerts), scoped per tenant.
+- 👥 **Patients** — CRUD with phone and anamnesis (allergies, medical alerts), scoped per tenant.
 - 📅 **Appointments** — weekly/daily agenda with **overlap prevention** per dentist, reschedule and status changes.
 - 🦷 **Clinical records & odontogram** — evolution notes signed by the dentist + odontogram state stored as **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiographs** — uploads via **time-limited pre-signed URLs** (S3/MinIO), never exposing the bucket publicly.

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 public record UpdatePatientRequest(
         @NotBlank String fullName,
+        String phone,
         LocalDate dateOfBirth,
         String medicalAlerts
 ) {}

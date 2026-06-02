@@ -42,6 +42,7 @@ public class PatientService {
         Patient patient = Patient.builder()
                 .tenantId(tenantId)
                 .fullName(request.fullName())
+                .phone(request.phone())
                 .dateOfBirth(request.dateOfBirth())
                 .medicalAlerts(request.medicalAlerts())
                 .build();
@@ -63,6 +64,7 @@ public class PatientService {
     public PatientResponse update(UUID id, UpdatePatientRequest request) {
         Patient patient = getOrThrow(id);
         patient.setFullName(request.fullName());
+        patient.setPhone(request.phone());
         patient.setDateOfBirth(request.dateOfBirth());
         patient.setMedicalAlerts(request.medicalAlerts());
         return PatientResponse.from(patientRepository.save(patient));

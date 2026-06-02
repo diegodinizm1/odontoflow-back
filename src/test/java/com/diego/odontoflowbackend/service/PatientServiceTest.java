@@ -94,9 +94,10 @@ class PatientServiceTest {
         when(patientRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         PatientResponse response = patientService.create(
-                new CreatePatientRequest("Maria Souza", LocalDate.of(1985, 3, 10), null));
+                new CreatePatientRequest("Maria Souza", "(11) 99999-8888", LocalDate.of(1985, 3, 10), null));
 
         assertThat(response.fullName()).isEqualTo("Maria Souza");
+        assertThat(response.phone()).isEqualTo("(11) 99999-8888");
         verify(patientRepository).save(argThat(p -> p.getTenantId().equals(tenantId)));
     }
 
@@ -108,7 +109,7 @@ class PatientServiceTest {
         when(patientRepository.countByTenantId(tenantId)).thenReturn(50L); // FREE limit reached
 
         assertThatThrownBy(() -> patientService.create(
-                new CreatePatientRequest("Excedente", null, null)))
+                new CreatePatientRequest("Excedente", null, null, null)))
                 .isInstanceOf(PlanLimitExceededException.class)
                 .hasMessageContaining("upgrade");
         verify(patientRepository, never()).save(any());
@@ -121,9 +122,10 @@ class PatientServiceTest {
         when(patientRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         PatientResponse response = patientService.update(patientId,
-                new UpdatePatientRequest("João Atualizado", LocalDate.of(1990, 5, 20), "Sem alergias"));
+                new UpdatePatientRequest("João Atualizado", "(11) 98888-7777", LocalDate.of(1990, 5, 20), "Sem alergias"));
 
         assertThat(response.fullName()).isEqualTo("João Atualizado");
+        assertThat(response.phone()).isEqualTo("(11) 98888-7777");
         assertThat(response.medicalAlerts()).isEqualTo("Sem alergias");
     }
 

@@ -29,6 +29,9 @@ public class Patient {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @Column(name = "phone")
+    private String phone;
+
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
