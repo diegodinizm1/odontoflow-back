@@ -1,4 +1,30 @@
 services:
+  # Backend API — only started with the "full" profile:
+  #   docker compose --profile full up --build
+  # (the default profile starts just the dependencies, used by `mvnw spring-boot:run`)
+  app:
+    profiles: ["full"]
+    build: .
+    container_name: odontoflow-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+      stripe-mock:
+        condition: service_started
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/odontoflow
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-odontoflow_dev}
+      STORAGE_ENDPOINT: http://minio:9000
+      STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY:-admin}
+      STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY:-supersecretpassword}
+      STRIPE_BASE_URL: http://stripe-mock:12111
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
+    ports:
+      - "8080:8080"
+
   postgres:
     image: 'postgres:latest'
     environment:
@@ -7,6 +33,11 @@ services:
       - 'POSTGRES_USER=${DB_USERNAME:-postgres}'
     ports:
       - '5433:5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d odontoflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   minio:
     image: minio/minio:latest

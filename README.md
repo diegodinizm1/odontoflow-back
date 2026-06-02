@@ -133,6 +133,16 @@ cp .env.example .env
 The API is available at `http://localhost:8080/api` and Swagger UI at
 `http://localhost:8080/api/swagger-ui.html`. Flyway applies all migrations on startup.
 
+### Run the full stack with Docker (one command)
+
+The whole backend (API + PostgreSQL + MinIO + stripe-mock) runs from the `full` Compose profile — no JDK or Maven needed on your machine:
+
+```bash
+docker compose --profile full up --build
+```
+
+The API is then served at `http://localhost:8080/api`. (Without the profile, `compose.yaml` starts only the dependencies, which is what `./mvnw spring-boot:run` uses for local development.)
+
 ### Configuration
 
 All sensitive settings come from environment variables (with dev defaults). See [`.env.example`](.env.example) — notably `JWT_SECRET` **must** be overridden in production, and `BILLING_PROVIDER` switches between `fake` (offline) and `stripe`.
