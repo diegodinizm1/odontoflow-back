@@ -27,7 +27,7 @@ This repository is the **REST API** (Spring Boot). The Angular frontend lives in
 - 📊 **Dashboard** — one aggregated overview: patient count, today's agenda, monthly revenue and pending charges.
 - 🔐 **Onboarding & Auth** — self-service clinic registration provisioning the founding dentist; JWT login carrying `user_id`, `role` and `tenant_id`.
 - 👥 **Patients** — CRUD with phone and anamnesis (allergies, medical alerts), scoped per tenant.
-- 📅 **Appointments** — weekly/daily agenda with **overlap prevention** per dentist, reschedule and status changes.
+- 📅 **Appointments** — weekly/daily agenda with **overlap prevention** per dentist, reschedule and status changes. **Role-scoped visibility**: dentists only see their own agenda, receptionists see all and can filter by dentist.
 - 🦷 **Clinical records & odontogram** — evolution notes signed by the dentist + odontogram state stored as **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiographs** — uploads via **time-limited pre-signed URLs** (S3/MinIO), never exposing the bucket publicly.
 - 🗂️ **Treatment plans** — budget with line items (procedure, optional tooth, amount); completing an item auto-generates a pending charge in finances.
@@ -108,7 +108,7 @@ Base path: `/api` · Interactive docs: **`/api/swagger-ui.html`**
 | `GET` | `/patients/{id}/odontogram` | Latest odontogram state |
 | `GET/POST/DELETE` | `/patients/{id}/files` | Radiographs (pre-signed URLs) |
 | `GET` | `/patients/{id}/audit` | Change history (audit trail) |
-| `GET/POST` | `/appointments` | Agenda (range query) / create |
+| `GET/POST` | `/appointments` | Agenda (range query, role-scoped + optional `dentistId` filter) / create |
 | `PUT/PATCH` | `/appointments/{id}` | Reschedule / change status |
 | `GET/POST` | `/patients/{id}/treatment-plans` | Treatment plans / create with items |
 | `POST` | `/patients/{id}/treatment-plans/{planId}/items/{itemId}/complete` | Complete item (generates a charge) |

@@ -27,7 +27,7 @@ Este repositório é a **API REST** (Spring Boot). O frontend em Angular fica em
 - 📊 **Dashboard** — visão geral agregada: total de pacientes, agenda do dia, faturamento do mês e cobranças pendentes.
 - 🔐 **Onboarding & Autenticação** — cadastro autônomo da clínica provisionando o dentista fundador; login JWT com `user_id`, `role` e `tenant_id`.
 - 👥 **Pacientes** — CRUD com telefone e anamnese (alergias, alertas médicos), isolado por tenant.
-- 📅 **Agenda** — visão semanal/diária com **prevenção de sobreposição** por dentista, reagendamento e mudança de status.
+- 📅 **Agenda** — visão semanal/diária com **prevenção de sobreposição** por dentista, reagendamento e mudança de status. **Visibilidade por papel**: dentistas veem apenas a própria agenda, recepcionistas veem todas e podem filtrar por dentista.
 - 🦷 **Prontuário & odontograma** — evoluções assinadas pelo dentista + estado do odontograma em **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiografias** — upload via **Pre-Signed URLs temporárias** (S3/MinIO), sem expor o bucket publicamente.
 - 🗂️ **Planos de tratamento** — orçamento com itens (procedimento, dente opcional, valor); ao concluir um item, gera automaticamente uma cobrança pendente no financeiro.
@@ -108,7 +108,7 @@ Base: `/api` · Documentação interativa: **`/api/swagger-ui.html`**
 | `GET` | `/patients/{id}/odontogram` | Estado atual do odontograma |
 | `GET/POST/DELETE` | `/patients/{id}/files` | Radiografias (Pre-Signed URLs) |
 | `GET` | `/patients/{id}/audit` | Histórico de alterações (auditoria) |
-| `GET/POST` | `/appointments` | Agenda (consulta por intervalo) / criar |
+| `GET/POST` | `/appointments` | Agenda (intervalo, por papel + filtro opcional `dentistId`) / criar |
 | `PUT/PATCH` | `/appointments/{id}` | Reagendar / mudar status |
 | `GET/POST` | `/patients/{id}/treatment-plans` | Planos de tratamento / criar com itens |
 | `POST` | `/patients/{id}/treatment-plans/{planId}/items/{itemId}/complete` | Concluir item (gera cobrança) |
