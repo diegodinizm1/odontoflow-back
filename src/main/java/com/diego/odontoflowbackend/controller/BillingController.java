@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/billing")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('DENTIST')")
 @Tag(name = "Billing", description = "Subscription plans and invoices (SaaS billing)")
 @SecurityRequirement(name = "bearerAuth")
 public class BillingController {

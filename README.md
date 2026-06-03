@@ -41,7 +41,7 @@ This repository is the **REST API** (Spring Boot). The Angular frontend lives in
 **Non-functional**
 - 🏢 **Multi-tenancy** — logical isolation via a `tenant_id` discriminator on every table, enforced at the service layer from the JWT.
 - 📜 **Audit trail (LGPD/HIPAA)** — Hibernate Envers mirrors every change to `patients` and `clinical_records`, stamped with the acting user.
-- 🔒 **Security** — Spring Security, stateless JWT, BCrypt password hashing, method-level role checks.
+- 🔒 **Security & role scoping** — Spring Security, stateless JWT, BCrypt password hashing, method-level role checks. Receptionists are blocked from billing, the finances overview and team management (`@PreAuthorize`), but can still create charges for patients.
 
 ## Tech stack
 

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,13 +27,15 @@ public class ChargeController {
     private final ChargeService chargeService;
 
     @GetMapping
-    @Operation(summary = "List charges of the tenant")
+    @PreAuthorize("hasRole('DENTIST')")
+    @Operation(summary = "List charges of the tenant (revenue view, dentists only)")
     public List<ChargeResponse> list() {
         return chargeService.list();
     }
 
     @GetMapping("/summary")
-    @Operation(summary = "Financial summary (paid this month, total pending)")
+    @PreAuthorize("hasRole('DENTIST')")
+    @Operation(summary = "Financial summary (paid this month, total pending) — dentists only")
     public FinancialSummaryResponse summary(@RequestParam(required = false) Integer year,
                                             @RequestParam(required = false) Integer month) {
         if (year != null && month != null) {
@@ -43,13 +46,14 @@ public class ChargeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a charge")
+    @Operation(summary = "Create a charge for a patient (front-desk task, any role)")
     public ChargeResponse create(@Valid @RequestBody CreateChargeRequest request) {
         return chargeService.create(request);
     }
 
     @PatchMapping("/{id}/status")
-    @Operation(summary = "Change charge status (mark paid/canceled)")
+    @PreAuthorize("hasRole('DENTIST')")
+    @Operation(summary = "Change charge status (mark paid/canceled) — dentists only")
     public ChargeResponse updateStatus(@PathVariable UUID id, @Valid @RequestBody UpdateChargeStatusRequest request) {
         return chargeService.updateStatus(id, request);
     }

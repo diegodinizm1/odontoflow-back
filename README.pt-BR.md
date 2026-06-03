@@ -41,7 +41,7 @@ Este repositório é a **API REST** (Spring Boot). O frontend em Angular fica em
 **Não-funcionais**
 - 🏢 **Multi-tenancy** — isolamento lógico via coluna `tenant_id` em todas as tabelas, aplicado na camada de serviço a partir do JWT.
 - 📜 **Trilha de auditoria (LGPD/HIPAA)** — Hibernate Envers espelha toda alteração em `patients` e `clinical_records`, carimbada com o usuário responsável.
-- 🔒 **Segurança** — Spring Security, JWT stateless, hashing de senha com BCrypt, checagem de papel por método.
+- 🔒 **Segurança & papéis** — Spring Security, JWT stateless, hashing de senha com BCrypt, checagem de papel por método. Recepcionistas são bloqueados de assinatura, do resumo financeiro e da gestão de equipe (`@PreAuthorize`), mas ainda podem criar cobranças para pacientes.
 
 ## Stack
 
