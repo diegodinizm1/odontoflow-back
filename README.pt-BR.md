@@ -4,6 +4,7 @@
 
 **🌐 Idioma:** [English](README.md) · **Português 🇧🇷**
 
+[![CI](https://github.com/diegodinizm1/odontoflow-back/actions/workflows/ci.yml/badge.svg)](https://github.com/diegodinizm1/odontoflow-back/actions/workflows/ci.yml)
 ![Java](https://img.shields.io/badge/Java-17-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?logo=springboot&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-4169E1?logo=postgresql&logoColor=white)
