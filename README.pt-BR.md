@@ -29,7 +29,8 @@ Este repositório é a **API REST** (Spring Boot). O frontend em Angular fica em
 - 🔐 **Onboarding & Autenticação** — cadastro autônomo da clínica provisionando o dentista fundador; login JWT com `user_id`, `role` e `tenant_id`.
 - 👥 **Pacientes** — CRUD com telefone e anamnese (alergias, alertas médicos), isolado por tenant.
 - 📅 **Agenda** — visão semanal/diária com **prevenção de sobreposição** por dentista, reagendamento e mudança de status. **Visibilidade por papel**: dentistas veem apenas a própria agenda, recepcionistas veem todas e podem filtrar por dentista.
-- 🌐 **Agendamento online (página pública)** — o paciente escolhe um dentista e um horário livre e solicita a consulta **sem login**. A solicitação entra como `PENDENTE` e reserva o horário (reusando a checagem de sobreposição) até a clínica confirmar ou recusar; as solicitações pendentes aparecem no dashboard.
+- 🛎️ **Catálogo de serviços** — cada clínica gerencia seus procedimentos (nome, duração, preço); um conjunto inicial é semeado no cadastro. A duração define o tamanho do horário no agendamento online.
+- 🌐 **Agendamento online (marketplace público)** — um diretório sem login lista todas as clínicas; o paciente abre uma clínica, escolhe um **serviço** + dentista + horário livre e solicita a consulta. A solicitação entra como `PENDENTE` e reserva o horário (reusando a checagem de sobreposição) até a clínica confirmar ou recusar; as solicitações pendentes aparecem no dashboard.
 - 🦷 **Prontuário & odontograma** — evoluções assinadas pelo dentista + estado do odontograma em **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiografias** — upload via **Pre-Signed URLs temporárias** (S3/MinIO), sem expor o bucket publicamente.
 - 🗂️ **Planos de tratamento** — orçamento com itens (procedimento, dente opcional, valor); ao concluir um item, gera automaticamente uma cobrança pendente no financeiro.
@@ -102,8 +103,10 @@ Base: `/api` · Documentação interativa: **`/api/swagger-ui.html`**
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | `GET` | `/dashboard` | Visão geral agregada (contagens, faturamento, agenda do dia) |
-| `GET` | `/public/clinics/{slug}` | Perfil público da clínica + dentistas (sem auth) |
-| `GET` | `/public/clinics/{slug}/availability` | Horários livres de um dentista num dia (sem auth) |
+| `GET/POST/PUT/DELETE` | `/services` | Catálogo de serviços da clínica (CRUD) |
+| `GET` | `/public/clinics` | Diretório de todas as clínicas (marketplace, sem auth) |
+| `GET` | `/public/clinics/{slug}` | Perfil público da clínica + dentistas + serviços (sem auth) |
+| `GET` | `/public/clinics/{slug}/availability` | Horários livres de dentista + serviço num dia (sem auth) |
 | `POST` | `/public/clinics/{slug}/bookings` | Solicitar consulta online → `PENDENTE` (sem auth) |
 | `POST` | `/auth/tenant` | Registrar clínica + dentista fundador |
 | `POST` | `/auth/login` | Autenticar, retorna JWT |

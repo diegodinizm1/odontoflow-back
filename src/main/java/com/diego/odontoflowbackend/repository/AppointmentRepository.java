@@ -20,6 +20,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     @Query("""
             select a from Appointment a
             join fetch a.patient
+            left join fetch a.service
             where a.tenantId = :tenantId
               and a.startTime < :end
               and a.endTime > :start
@@ -32,6 +33,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
     @Query("""
             select a from Appointment a
             join fetch a.patient
+            left join fetch a.service
             where a.tenantId = :tenantId
               and a.dentistId = :dentistId
               and a.startTime < :end

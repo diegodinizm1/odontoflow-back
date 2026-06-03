@@ -10,6 +10,7 @@ import java.util.UUID;
 /** A patient's online appointment request (no authentication). */
 public record CreateBookingRequest(
         @NotNull UUID dentistId,
+        @NotNull UUID serviceId,
         @NotNull LocalDate date,
         @NotNull LocalTime time,
         @NotBlank String patientName,

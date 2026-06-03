@@ -25,6 +25,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final ServiceCatalogService serviceCatalogService;
 
     @Transactional
     public AuthResponse registerTenant(RegisterTenantRequest request) {
@@ -37,6 +38,8 @@ public class AuthService {
                 .document(request.document())
                 .publicSlug(uniqueSlug(request.clinicName()))
                 .build());
+
+        serviceCatalogService.createDefaultsFor(tenant.getId());
 
         User founder = userRepository.save(User.builder()
                 .tenantId(tenant.getId())

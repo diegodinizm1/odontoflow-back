@@ -33,6 +33,7 @@ class PublicBookingControllerIT {
     private String token;
     private String slug;
     private String dentistId;
+    private String serviceId;
 
     @BeforeAll
     void setup() throws Exception {
@@ -60,14 +61,30 @@ class PublicBookingControllerIT {
         String usersBody = mockMvc.perform(get("/users").header("Authorization", "Bearer " + token))
                 .andReturn().getResponse().getContentAsString();
         dentistId = objectMapper.readTree(usersBody).get(0).get("id").asText();
+
+        // services are auto-seeded on registration; grab one from the public profile
+        String profileBody = mockMvc.perform(get("/public/clinics/{slug}", slug))
+                .andReturn().getResponse().getContentAsString();
+        serviceId = objectMapper.readTree(profileBody).get("services").get(0).get("id").asText();
     }
 
     @Test
-    void clinicProfile_isPublic_andListsDentist() throws Exception {
+    void directory_listsClinics() throws Exception {
+        mockMvc.perform(get("/public/clinics"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[?(@.publicSlug == '" + slug + "')].clinicName").value(
+                        org.hamcrest.Matchers.hasItem("Clínica Pública IT")));
+    }
+
+    @Test
+    void clinicProfile_isPublic_andListsDentistAndServices() throws Exception {
         mockMvc.perform(get("/public/clinics/{slug}", slug))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.clinicName").value("Clínica Pública IT"))
-                .andExpect(jsonPath("$.dentists[0].id").value(dentistId));
+                .andExpect(jsonPath("$.dentists[0].id").value(dentistId))
+                .andExpect(jsonPath("$.services").isArray())
+                .andExpect(jsonPath("$.services[0].durationMinutes").isNumber());
     }
 
     @Test
@@ -80,6 +97,7 @@ class PublicBookingControllerIT {
     void availability_listsFreeSlots() throws Exception {
         mockMvc.perform(get("/public/clinics/{slug}/availability", slug)
                         .param("dentistId", dentistId)
+                        .param("serviceId", serviceId)
                         .param("date", "2027-03-15"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.slots").isArray())
@@ -90,6 +108,7 @@ class PublicBookingControllerIT {
     void booking_createsPendingAppointment_andBlocksTheSlot() throws Exception {
         Map<String, Object> booking = Map.of(
                 "dentistId", dentistId,
+                "serviceId", serviceId,
                 "date", "2027-04-20",
                 "time", "09:00",
                 "patientName", "Paciente Online",

@@ -11,6 +11,7 @@ public record AppointmentResponse(
         UUID patientId,
         String patientName,
         UUID dentistId,
+        String serviceName,
         LocalDateTime startTime,
         LocalDateTime endTime,
         AppointmentStatus status
@@ -21,6 +22,7 @@ public record AppointmentResponse(
                 a.getPatient().getId(),
                 a.getPatient().getFullName(),
                 a.getDentistId(),
+                a.getService() != null ? a.getService().getName() : null,
                 a.getStartTime(),
                 a.getEndTime(),
                 a.getStatus()

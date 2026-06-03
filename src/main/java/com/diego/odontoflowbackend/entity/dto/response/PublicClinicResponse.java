@@ -6,5 +6,6 @@ import java.util.List;
 public record PublicClinicResponse(
         String clinicName,
         String publicSlug,
-        List<PublicDentistResponse> dentists
+        List<PublicDentistResponse> dentists,
+        List<PublicServiceResponse> services
 ) {}

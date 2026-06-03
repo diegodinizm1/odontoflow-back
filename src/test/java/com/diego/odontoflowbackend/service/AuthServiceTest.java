@@ -32,6 +32,7 @@ class AuthServiceTest {
     @Mock UserRepository userRepository;
     @Mock PasswordEncoder passwordEncoder;
     @Mock JwtUtil jwtUtil;
+    @Mock ServiceCatalogService serviceCatalogService;
 
     @InjectMocks AuthService authService;
 

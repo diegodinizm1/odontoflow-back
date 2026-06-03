@@ -34,6 +34,10 @@ public class Appointment {
     @Column(name = "dentist_id", nullable = false)
     private UUID dentistId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id")
+    private ClinicService service;
+
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
