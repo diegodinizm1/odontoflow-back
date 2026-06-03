@@ -39,8 +39,6 @@ public class AuthService {
                 .publicSlug(uniqueSlug(request.clinicName()))
                 .build());
 
-        serviceCatalogService.createDefaultsFor(tenant.getId());
-
         User founder = userRepository.save(User.builder()
                 .tenantId(tenant.getId())
                 .fullName(request.fullName())
@@ -48,6 +46,8 @@ public class AuthService {
                 .passwordHash(passwordEncoder.encode(request.password()))
                 .role(Role.DENTIST)
                 .build());
+
+        serviceCatalogService.createDefaultsFor(tenant.getId(), founder.getId());
 
         return new AuthResponse(jwtUtil.generateToken(founder));
     }

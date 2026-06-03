@@ -61,7 +61,11 @@ class PublicBookingServiceTest {
         tenant = Tenant.builder().id(tenantId).clinicName("Clínica Sorriso").publicSlug(slug).build();
         dentist = User.builder().id(dentistId).tenantId(tenantId).fullName("Dra. Ana").role(Role.DENTIST).build();
         clinicService = ClinicService.builder().id(serviceId).tenantId(tenantId)
-                .name("Limpeza").durationMinutes(30).price(new BigDecimal("150.00")).active(true).build();
+                .name("Limpeza")
+                .category(com.diego.odontoflowbackend.entity.enums.DentalSpecialty.PERIODONTICS)
+                .durationMinutes(30).price(new BigDecimal("150.00"))
+                .dentistIds(new java.util.HashSet<>(java.util.Set.of(dentistId)))
+                .active(true).build();
     }
 
     @Test

@@ -84,7 +84,9 @@ public class PublicBookingService {
     public AvailabilityResponse availability(String slug, UUID dentistId, UUID serviceId, LocalDate date) {
         Tenant tenant = getTenant(slug);
         ensureDentist(tenant.getId(), dentistId);
-        int duration = resolveService(tenant.getId(), serviceId).getDurationMinutes();
+        ClinicService service = resolveService(tenant.getId(), serviceId);
+        ensureDentistPerformsService(service, dentistId);
+        int duration = service.getDurationMinutes();
 
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
@@ -117,6 +119,7 @@ public class PublicBookingService {
         Tenant tenant = getTenant(slug);
         User dentist = ensureDentist(tenant.getId(), request.dentistId());
         ClinicService service = resolveService(tenant.getId(), request.serviceId());
+        ensureDentistPerformsService(service, dentist.getId());
 
         LocalDateTime start = request.date().atTime(request.time());
         LocalDateTime end = start.plusMinutes(service.getDurationMinutes());
@@ -187,5 +190,11 @@ public class PublicBookingService {
             throw new BadRequestException("Serviço indisponível.");
         }
         return service;
+    }
+
+    private void ensureDentistPerformsService(ClinicService service, UUID dentistId) {
+        if (!service.getDentistIds().contains(dentistId)) {
+            throw new BadRequestException("Esse dentista não realiza este procedimento.");
+        }
     }
 }

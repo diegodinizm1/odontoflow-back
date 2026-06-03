@@ -1,11 +1,14 @@
 package com.diego.odontoflowbackend.entity;
 
+import com.diego.odontoflowbackend.entity.enums.DentalSpecialty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /** A bookable procedure/service offered by a clinic (shown on the public booking page). */
@@ -33,6 +36,17 @@ public class ClinicService {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 40)
+    private DentalSpecialty category;
+
+    /** Dentists (users) who perform this service. */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "service_dentists", joinColumns = @JoinColumn(name = "service_id"))
+    @Column(name = "dentist_id")
+    @Builder.Default
+    private Set<UUID> dentistIds = new HashSet<>();
 
     @Column(nullable = false)
     private boolean active;

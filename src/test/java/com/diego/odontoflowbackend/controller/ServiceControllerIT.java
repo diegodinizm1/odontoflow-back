@@ -65,9 +65,11 @@ class ServiceControllerIT {
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
-                                "name", "Implante", "durationMinutes", 90, "price", 1200.00))))
+                                "name", "Implante", "category", "IMPLANTOLOGY",
+                                "durationMinutes", 90, "price", 1200.00))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Implante"))
+                .andExpect(jsonPath("$.category").value("IMPLANTOLOGY"))
                 .andExpect(jsonPath("$.durationMinutes").value(90))
                 .andReturn().getResponse().getContentAsString();
         String id = objectMapper.readTree(created).get("id").asText();
@@ -76,7 +78,8 @@ class ServiceControllerIT {
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
-                                "name", "Implante unitário", "durationMinutes", 120, "price", 1500.00))))
+                                "name", "Implante unitário", "category", "SURGERY",
+                                "durationMinutes", 120, "price", 1500.00))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Implante unitário"))
                 .andExpect(jsonPath("$.durationMinutes").value(120));
@@ -91,7 +94,7 @@ class ServiceControllerIT {
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
-                                "name", "X", "durationMinutes", 5, "price", 10.00))))
+                                "name", "X", "category", "GENERAL", "durationMinutes", 5, "price", 10.00))))
                 .andExpect(status().isBadRequest());
     }
 
