@@ -26,6 +26,10 @@ public class Tenant {
     @Column(nullable = false, unique = true)
     private String document;
 
+    /** URL-safe identifier for the public online-booking page (e.g. /agendar/{publicSlug}). */
+    @Column(name = "public_slug", nullable = false, unique = true)
+    private String publicSlug;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

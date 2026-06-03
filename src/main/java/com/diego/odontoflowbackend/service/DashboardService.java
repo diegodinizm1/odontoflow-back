@@ -4,8 +4,10 @@ import com.diego.odontoflowbackend.entity.dto.response.AppointmentResponse;
 import com.diego.odontoflowbackend.entity.dto.response.DashboardResponse;
 import com.diego.odontoflowbackend.entity.dto.response.FinancialSummaryResponse;
 import com.diego.odontoflowbackend.entity.enums.AppointmentStatus;
+import com.diego.odontoflowbackend.exception.NotFoundException;
 import com.diego.odontoflowbackend.repository.AppointmentRepository;
 import com.diego.odontoflowbackend.repository.PatientRepository;
+import com.diego.odontoflowbackend.repository.TenantRepository;
 import com.diego.odontoflowbackend.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class DashboardService {
 
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
+    private final TenantRepository tenantRepository;
     private final ChargeService chargeService;
 
     public DashboardResponse summary() {
@@ -38,12 +41,19 @@ public class DashboardService {
 
         FinancialSummaryResponse finance = chargeService.summaryForCurrentMonth();
         long patients = patientRepository.countByTenantId(tenantId);
+        long pendingRequests = appointmentRepository
+                .countByTenantIdAndStatus(tenantId, AppointmentStatus.PENDING);
+        String publicSlug = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new NotFoundException("Clínica não encontrada."))
+                .getPublicSlug();
 
         return new DashboardResponse(
                 patients,
                 todayAppointments.size(),
                 finance.paidThisMonth(),
                 finance.pendingTotal(),
+                pendingRequests,
+                publicSlug,
                 todayAppointments
         );
     }

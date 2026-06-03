@@ -1,6 +1,7 @@
 package com.diego.odontoflowbackend.repository;
 
 import com.diego.odontoflowbackend.entity.Appointment;
+import com.diego.odontoflowbackend.entity.enums.AppointmentStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,8 @@ import java.util.UUID;
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
     Optional<Appointment> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    long countByTenantIdAndStatus(UUID tenantId, AppointmentStatus status);
 
     @Query("""
             select a from Appointment a
@@ -44,7 +47,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             select count(a) > 0 from Appointment a
             where a.tenantId = :tenantId
               and a.dentistId = :dentistId
-              and a.status = com.diego.odontoflowbackend.entity.enums.AppointmentStatus.SCHEDULED
+              and a.status in (
+                    com.diego.odontoflowbackend.entity.enums.AppointmentStatus.SCHEDULED,
+                    com.diego.odontoflowbackend.entity.enums.AppointmentStatus.PENDING)
               and (:excludeId is null or a.id <> :excludeId)
               and a.startTime < :end
               and a.endTime > :start

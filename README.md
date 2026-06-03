@@ -29,6 +29,7 @@ This repository is the **REST API** (Spring Boot). The Angular frontend lives in
 - 🔐 **Onboarding & Auth** — self-service clinic registration provisioning the founding dentist; JWT login carrying `user_id`, `role` and `tenant_id`.
 - 👥 **Patients** — CRUD with phone and anamnesis (allergies, medical alerts), scoped per tenant.
 - 📅 **Appointments** — weekly/daily agenda with **overlap prevention** per dentist, reschedule and status changes. **Role-scoped visibility**: dentists only see their own agenda, receptionists see all and can filter by dentist.
+- 🌐 **Online booking (public page)** — patients pick a dentist and a free slot and request an appointment **without logging in**. The request lands as `PENDING` and reserves the slot (reusing the overlap check) until the clinic confirms or rejects it; pending requests are surfaced on the dashboard.
 - 🦷 **Clinical records & odontogram** — evolution notes signed by the dentist + odontogram state stored as **JSONB** (`{"18": {"condition":"CARIES","surfaces":["O"]}}`).
 - 🖼️ **Radiographs** — uploads via **time-limited pre-signed URLs** (S3/MinIO), never exposing the bucket publicly.
 - 🗂️ **Treatment plans** — budget with line items (procedure, optional tooth, amount); completing an item auto-generates a pending charge in finances.
@@ -101,6 +102,9 @@ Base path: `/api` · Interactive docs: **`/api/swagger-ui.html`**
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/dashboard` | Aggregated overview (counts, revenue, today's agenda) |
+| `GET` | `/public/clinics/{slug}` | Public clinic profile + bookable dentists (no auth) |
+| `GET` | `/public/clinics/{slug}/availability` | Free slots for a dentist on a given day (no auth) |
+| `POST` | `/public/clinics/{slug}/bookings` | Request an appointment online → `PENDING` (no auth) |
 | `POST` | `/auth/tenant` | Register clinic + founding dentist |
 | `POST` | `/auth/login` | Authenticate, returns JWT |
 | `GET/POST` | `/patients` | List / create patients |

@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface TenantRepository extends JpaRepository<Tenant, UUID> {
     boolean existsByDocument(String document);
     Optional<Tenant> findByDocument(String document);
+    boolean existsByPublicSlug(String publicSlug);
+    Optional<Tenant> findByPublicSlug(String publicSlug);
 }

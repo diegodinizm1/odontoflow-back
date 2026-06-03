@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface PatientRepository extends JpaRepository<Patient, UUID> {
     List<Patient> findAllByTenantId(UUID tenantId);
     Optional<Patient> findByIdAndTenantId(UUID id, UUID tenantId);
+    Optional<Patient> findFirstByTenantIdAndPhone(UUID tenantId, String phone);
     boolean existsByIdAndTenantId(UUID id, UUID tenantId);
     long countByTenantId(UUID tenantId);
 }

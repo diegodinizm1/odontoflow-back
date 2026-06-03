@@ -9,6 +9,7 @@ import com.diego.odontoflowbackend.entity.enums.Role;
 import com.diego.odontoflowbackend.repository.TenantRepository;
 import com.diego.odontoflowbackend.repository.UserRepository;
 import com.diego.odontoflowbackend.security.JwtUtil;
+import com.diego.odontoflowbackend.util.Slugs;
 import com.diego.odontoflowbackend.exception.ConflictException;
 import com.diego.odontoflowbackend.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class AuthService {
         Tenant tenant = tenantRepository.save(Tenant.builder()
                 .clinicName(request.clinicName())
                 .document(request.document())
+                .publicSlug(uniqueSlug(request.clinicName()))
                 .build());
 
         User founder = userRepository.save(User.builder()
@@ -56,5 +58,16 @@ public class AuthService {
         }
 
         return new AuthResponse(jwtUtil.generateToken(user));
+    }
+
+    /** Builds a slug from the clinic name, appending a counter until it is unique. */
+    private String uniqueSlug(String clinicName) {
+        String base = Slugs.slugify(clinicName);
+        String candidate = base;
+        int suffix = 2;
+        while (tenantRepository.existsByPublicSlug(candidate)) {
+            candidate = base + "-" + suffix++;
+        }
+        return candidate;
     }
 }
