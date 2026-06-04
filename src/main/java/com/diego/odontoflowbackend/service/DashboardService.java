@@ -43,9 +43,8 @@ public class DashboardService {
         long patients = patientRepository.countByTenantId(tenantId);
         long pendingRequests = appointmentRepository
                 .countByTenantIdAndStatus(tenantId, AppointmentStatus.PENDING);
-        String publicSlug = tenantRepository.findById(tenantId)
-                .orElseThrow(() -> new NotFoundException("Clínica não encontrada."))
-                .getPublicSlug();
+        var tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new NotFoundException("Clínica não encontrada."));
 
         return new DashboardResponse(
                 patients,
@@ -53,7 +52,8 @@ public class DashboardService {
                 finance.paidThisMonth(),
                 finance.pendingTotal(),
                 pendingRequests,
-                publicSlug,
+                tenant.getClinicName(),
+                tenant.getPublicSlug(),
                 todayAppointments
         );
     }

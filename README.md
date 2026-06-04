@@ -120,10 +120,12 @@ Base path: `/api` · Interactive docs: **`/api/swagger-ui.html`**
 | `PUT/PATCH` | `/appointments/{id}` | Reschedule / change status |
 | `GET/POST` | `/patients/{id}/treatment-plans` | Treatment plans / create with items |
 | `POST` | `/patients/{id}/treatment-plans/{planId}/items/{itemId}/complete` | Complete item (generates a charge) |
-| `GET/POST` | `/charges` · `/charges/summary` | Finances / monthly summary |
-| `GET/POST` | `/billing/*` | Plans, subscription, invoices |
+| `GET/POST` | `/charges` | Charges — list/create (any role); `PATCH /{id}/status` to settle |
+| `GET` | `/charges/summary` | Monthly revenue summary (dentists only) |
+| `GET/POST` | `/billing/*` | Plans, subscription, invoices (dentists only) |
 | `POST` | `/webhooks/billing` | Payment gateway callbacks |
-| `GET/POST/DELETE` | `/users` | Team management |
+| `GET/POST/DELETE` | `/users` | Team — list (any role); invite/remove (dentists only) |
+| `PATCH` | `/account/password` | Change own password |
 
 ## Getting started
 

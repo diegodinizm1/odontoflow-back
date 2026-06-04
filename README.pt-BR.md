@@ -120,10 +120,12 @@ Base: `/api` · Documentação interativa: **`/api/swagger-ui.html`**
 | `PUT/PATCH` | `/appointments/{id}` | Reagendar / mudar status |
 | `GET/POST` | `/patients/{id}/treatment-plans` | Planos de tratamento / criar com itens |
 | `POST` | `/patients/{id}/treatment-plans/{planId}/items/{itemId}/complete` | Concluir item (gera cobrança) |
-| `GET/POST` | `/charges` · `/charges/summary` | Financeiro / resumo mensal |
-| `GET/POST` | `/billing/*` | Planos, assinatura, faturas |
+| `GET/POST` | `/charges` | Cobranças — listar/criar (qualquer papel); `PATCH /{id}/status` para quitar |
+| `GET` | `/charges/summary` | Resumo de faturamento do mês (só dentistas) |
+| `GET/POST` | `/billing/*` | Planos, assinatura, faturas (só dentistas) |
 | `POST` | `/webhooks/billing` | Callbacks do gateway de pagamento |
-| `GET/POST/DELETE` | `/users` | Gestão de equipe |
+| `GET/POST/DELETE` | `/users` | Equipe — listar (qualquer papel); convidar/remover (só dentistas) |
+| `PATCH` | `/account/password` | Trocar a própria senha |
 
 ## Como rodar
 

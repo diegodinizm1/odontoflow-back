@@ -75,8 +75,9 @@ class RoleAccessIT {
     }
 
     @Test
-    void receptionist_isBlockedFromFinancesBillingAndTeamMutations() throws Exception {
-        mockMvc.perform(get("/charges").header("Authorization", "Bearer " + receptionistToken))
+    void receptionist_isBlockedFromRevenueBillingAndTeamMutations() throws Exception {
+        // the revenue summary (faturamento) stays dentist-only
+        mockMvc.perform(get("/charges/summary").header("Authorization", "Bearer " + receptionistToken))
                 .andExpect(status().isForbidden());
         mockMvc.perform(get("/billing/plans").header("Authorization", "Bearer " + receptionistToken))
                 .andExpect(status().isForbidden());
@@ -88,8 +89,10 @@ class RoleAccessIT {
     }
 
     @Test
-    void receptionist_canStillListTeamForTheAgenda() throws Exception {
+    void receptionist_canListTeamAndChargesForFrontDesk() throws Exception {
         mockMvc.perform(get("/users").header("Authorization", "Bearer " + receptionistToken))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/charges").header("Authorization", "Bearer " + receptionistToken))
                 .andExpect(status().isOk());
     }
 

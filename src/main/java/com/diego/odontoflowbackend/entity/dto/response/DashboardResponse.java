@@ -9,6 +9,7 @@ public record DashboardResponse(
         BigDecimal paidThisMonth,
         BigDecimal pendingTotal,
         long pendingBookingRequests,
+        String clinicName,
         String publicSlug,
         List<AppointmentResponse> todayAppointments
 ) {}

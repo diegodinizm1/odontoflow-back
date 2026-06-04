@@ -35,6 +35,7 @@ public class JwtUtil {
                 .claim("tenant_id", user.getTenantId().toString())
                 .claim("role", user.getRole().name())
                 .claim("email", user.getEmail())
+                .claim("name", user.getFullName())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(secretKey)

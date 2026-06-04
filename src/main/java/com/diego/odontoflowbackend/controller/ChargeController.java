@@ -27,8 +27,7 @@ public class ChargeController {
     private final ChargeService chargeService;
 
     @GetMapping
-    @PreAuthorize("hasRole('DENTIST')")
-    @Operation(summary = "List charges of the tenant (revenue view, dentists only)")
+    @Operation(summary = "List charges of the tenant (front-desk, any role)")
     public List<ChargeResponse> list() {
         return chargeService.list();
     }
@@ -52,8 +51,7 @@ public class ChargeController {
     }
 
     @PatchMapping("/{id}/status")
-    @PreAuthorize("hasRole('DENTIST')")
-    @Operation(summary = "Change charge status (mark paid/canceled) — dentists only")
+    @Operation(summary = "Change charge status (mark paid/canceled) — front-desk, any role")
     public ChargeResponse updateStatus(@PathVariable UUID id, @Valid @RequestBody UpdateChargeStatusRequest request) {
         return chargeService.updateStatus(id, request);
     }

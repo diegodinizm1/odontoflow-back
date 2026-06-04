@@ -2,6 +2,7 @@ package com.diego.odontoflowbackend.service;
 
 import com.diego.odontoflowbackend.entity.Tenant;
 import com.diego.odontoflowbackend.entity.User;
+import com.diego.odontoflowbackend.entity.dto.request.ChangePasswordRequest;
 import com.diego.odontoflowbackend.entity.dto.request.LoginRequest;
 import com.diego.odontoflowbackend.entity.dto.request.RegisterTenantRequest;
 import com.diego.odontoflowbackend.entity.dto.response.AuthResponse;
@@ -61,6 +62,17 @@ public class AuthService {
         }
 
         return new AuthResponse(jwtUtil.generateToken(user));
+    }
+
+    @Transactional
+    public void changePassword(java.util.UUID userId, ChangePasswordRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UnauthorizedException("Usuário não encontrado."));
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            throw new UnauthorizedException("Senha atual incorreta.");
+        }
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        userRepository.save(user);
     }
 
     /** Builds a slug from the clinic name, appending a counter until it is unique. */
